@@ -1,0 +1,36 @@
+I would use Selenium Webdriver to automate the browser interactions and JUnit to create and execute test cases and validate results. 
+
+Selenium will open the web application and locate the task and the delete button, click on “delete” and confirm it.
+JUnit will organize the test structure, Using @BeforeEach and @AfterEach for initialization and to close the browser when the test ends. 
+
+public class DeleteTaskTest {
+
+    WebDriver driver;
+
+    @BeforeEach
+    public void setUp() {
+        driver = new ChromeDriver();
+        driver.get("http://testwebapp:8080");
+    }
+
+    @Test
+    public void deleteTask() {
+        WebElement deleteButton =
+            driver.findElement(By.id("deleteTask"));
+        deleteButton.click();
+
+        driver.findElement(By.id("confirmDelete")).click();
+
+        assertTrue(
+            driver.findElements(By.id("task1")).isEmpty(),
+            "Task should be deleted"
+        );
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}

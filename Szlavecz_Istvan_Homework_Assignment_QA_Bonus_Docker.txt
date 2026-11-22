@@ -1,0 +1,37 @@
+Docker is a containerization platform that packages an application along with all its dependencies,
+libraries, runtimes, and configuration files into an isolated unit called container.
+
+For QA engineers, Docker makes it easier to maintain a consistent testing environment.
+It ensures that tests run with the same browser versions, Node.js runtime, dependencies, and configurations both locally and on CI/CD servers.
+This helps avoid environment-related issues. Docker also makes it possible to run tests in parallel, which can save a lot of time during regression testing.
+The user doesn't need to install specific browser or driver versions on the host machine.
+Each test run can also use a new container that can be removed when the run is finished to keep test data clean between executions.
+
+docker-compose.yaml
+
+services:
+  # 1. The web application to test
+  test-webapp:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+
+  # 2. Isolated Playwright test runner
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.48.0-jammy
+    volumes:
+      - ./tests:/testapp
+    working_dir: /testapp
+    environment:
+      BASE_URL: http://test-webapp
+    command: npx playwright test
+    depends_on:
+      - test-webapp
+
+---
+Start the test:
+docker compose up --abort-on-container-exit 
+
+After testing finished:
+docker compose down
+

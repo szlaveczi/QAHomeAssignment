@@ -1,0 +1,40 @@
+I would use Github to store the code and manage pull/push requests,
+GitHub Actions to automatically build and run the test whenever there is a new push/pull request.
+
+Based on the previous task i would use Maven for dependency management,
+Selenium for the automated browser tests and JUnit to execute them
+
+Process:
+    Developer pushes new code or opens a pull request.
+    GitHub Actions detects the new request and triggers the workflow.
+    GitHub Actions sets up a configured environment and build the project.
+    Maven executes the automated tests.
+    GitHub Actions displays that the execution was successful or failed.
+    Also setup branch protection rule so all tests need to pass before getting merged to main.
+
+
+name: Base Push/Pull Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run tests
+        run: mvn clean test
